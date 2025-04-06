@@ -10,6 +10,7 @@ if (!isset($_SESSION['Username'])) {
 $id = $_GET['id'];
 $Username = $_SESSION['Username'];
 
+// Get the blog post
 $stmt = $conn->prepare("SELECT * FROM blog_posts WHERE id = ? AND user_id = ?");
 $stmt->bind_param("is", $id, $Username);
 $stmt->execute();
@@ -24,9 +25,26 @@ if (!$blog) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $content = $_POST['content'];
+    $newImagePath = $blog['image_path']; // Default to existing
 
-    $update = $conn->prepare("UPDATE blog_posts SET title = ?, content = ? WHERE id = ? AND user_id = ?");
-    $update->bind_param("ssis", $title, $content, $id, $Username);
+    // Handle new image upload (optional)
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+        $uploadDir = 'image/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $imageName = time() . '_' . basename($_FILES['image']['name']);
+        $targetFile = $uploadDir . $imageName;
+
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+            $newImagePath = $targetFile;
+        }
+    }
+
+    // Update blog post
+    $update = $conn->prepare("UPDATE blog_posts SET title = ?, content = ?, image_path = ? WHERE id = ? AND user_id = ?");
+    $update->bind_param("sssis", $title, $content, $newImagePath, $id, $Username);
     $update->execute();
 
     header("Location: Dashboard.php");
@@ -80,6 +98,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             resize: vertical;
         }
 
+        .custom-file-input {
+            padding: 10px;
+            background-color: #ecf0f1;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .custom-file-input:hover {
+            background-color: #d0e6f7;
+        }
+
+        img.preview {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
         button {
             background-color: #2c3e50;
             color: white;
@@ -117,12 +158,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h2>📝 Edit Blog</h2>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <label>Title:</label>
             <input type="text" name="title" value="<?= htmlspecialchars($blog['title']) ?>" required>
 
             <label>Content:</label>
             <textarea name="content" rows="10" required><?= htmlspecialchars($blog['content']) ?></textarea>
+
+            <label>Current Image:</label><br>
+            <?php if (!empty($blog['image_path'])): ?>
+                <img src="<?= htmlspecialchars($blog['image_path']) ?>" alt="Current Image" class="preview"><br>
+            <?php else: ?>
+                <p>No image uploaded.</p>
+            <?php endif; ?>
+
+            <label>Upload New Image (optional):</label>
+            <input type="file" name="image" accept="image/*" class="custom-file-input">
 
             <button type="submit">💾 Update</button>
         </form>

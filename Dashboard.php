@@ -83,9 +83,12 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
         }
 
         .blog-post h4 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
+    margin-top: 0;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
 
         .blog-post p {
             color: #555;
@@ -110,6 +113,8 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             color: #c0392b;
         }
 
+
+
         .no-blogs {
             text-align: center;
             color: #555;
@@ -117,6 +122,17 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             font-size: 1.1rem;
             margin-top: 40px;
         }
+
+        .blog-image {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    margin: 10px auto;
+}
+
     </style>
 </head>
 <body>
@@ -137,7 +153,13 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             <?php while ($row = $result->fetch_assoc()) { ?>
                 <div class="blog-post">
                     <h4><?= htmlspecialchars($row['title']) ?></h4>
-                    <p><?= nl2br(htmlspecialchars($row['content'])) ?></p>
+                 <?php if (!empty($row['image_path'])): ?>
+    <img src="<?= htmlspecialchars($row['image_path']) ?>" alt="Blog Image" class="blog-image">
+<?php endif; ?>
+                    <p class="blog-author">By <?= htmlspecialchars($row['author']) ?></p>
+
+<p><?= nl2br(htmlspecialchars($row['content'])) ?></p>
+
                     <small>Posted on <?= $row['created_at'] ?></small>
                     <a href="edit_blog.php?id=<?= $row['id'] ?>">Edit</a>
                     <a href="delete_blog.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this blog?')">Delete</a>
