@@ -11,14 +11,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $Username = $_SESSION['Username'];
     $title = $_POST['title'];
     $content = $_POST['content'];
+    $imagePath = '';
 
-    $stmt = $conn->prepare("INSERT INTO blog_posts (user_id, title, content) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $Username, $title, $content);
+    // Handle image upload
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+        $uploadDir = 'image/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true); // Create folder if it doesn't exist
+        }
+
+        $imageName = time() . '_' . basename($_FILES['image']['name']);
+        $targetFile = $uploadDir . $imageName;
+
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+            $imagePath = $targetFile;
+        }
+    }
+
+    // Insert blog post with image and author
+    $stmt = $conn->prepare("INSERT INTO blog_posts (user_id, title, content, image_path, author) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $Username, $title, $content, $imagePath, $Username);
     $stmt->execute();
 
     header('Location: Dashboard.php');
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -99,20 +117,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .back-link a:hover {
             text-decoration: underline;
         }
+
+        .custom-file-input {
+    padding: 10px;
+    background-color: #ecf0f1;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.custom-file-input:hover {
+    background-color: #d0e6f7;
+}
+
     </style>
 </head>
 <body>
     <div class="container">
         <h2>✍️ Write a Blog</h2>
-        <form method="POST">
-            <label>Title:</label>
-            <input type="text" name="title" required>
+       <!-- Inside the <form> -->
+<form method="POST" enctype="multipart/form-data">
+    <label>Title:</label>
+    <input type="text" name="title" required>
 
-            <label>Content:</label>
-            <textarea name="content" rows="10" required></textarea>
+    <label>Content:</label>
+    <textarea name="content" rows="10" required></textarea>
 
-            <button type="submit">🚀 Publish</button>
-        </form>
+    <label>Upload Image:</label>
+    <input type="file" name="image" accept="image/*" class="custom-file-input">
+
+    <button type="submit">🚀 Publish</button>
+</form>
+
+
 
         <div class="back-link">
             <p><a href="Dashboard.php">← Back to Dashboard</a></p>

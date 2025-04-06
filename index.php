@@ -99,6 +99,22 @@ $result = $conn->query($sql);
             font-size: 16px;
             color: #333;
         }
+        .blog-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    object-fit: cover;
+    max-height: 300px;
+}
+
+.blog-author {
+    font-size: 15px;
+    font-style: italic;
+    color: #555;
+    margin-bottom: 5px;
+}
+
 
         .no-posts {
             text-align: center;
@@ -141,14 +157,26 @@ $result = $conn->query($sql);
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="blog-card">
-                    <div class="blog-title"><?php echo htmlspecialchars($row['title']); ?></div>
-                    <div class="blog-date">
-                        <?php echo date("F j, Y", strtotime($row['created_at'])); ?>
-                    </div>
-                    <div class="blog-content">
-                        <?php echo nl2br(htmlspecialchars($row['content'])); ?>
-                    </div>
-                </div>
+    <?php if (!empty($row['image_path'])): ?>
+    <img src="<?php echo htmlspecialchars($row['image_path']); ?>" alt="Blog Image" class="blog-image">
+<?php endif; ?>
+
+<div class="blog-title"><?php echo htmlspecialchars($row['title']); ?></div>
+
+<?php if (!empty($row['author'])): ?>
+    <div class="blog-author">By <?php echo htmlspecialchars($row['author']); ?></div>
+<?php endif; ?>
+
+<div class="blog-date">
+    <?php echo date("F j, Y", strtotime($row['created_at'])); ?>
+</div>
+
+<div class="blog-content">
+    <?php echo nl2br(htmlspecialchars($row['content'])); ?>
+</div>
+
+</div>
+
             <?php endwhile; ?>
         <?php else: ?>
             <div class="no-posts">No blog posts available.</div>

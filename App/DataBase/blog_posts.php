@@ -6,4 +6,10 @@ CREATE TABLE blog_posts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE blog_posts
+ADD COLUMN image VARCHAR(255),
+ADD COLUMN author VARCHAR(100);
+
+
+
 
