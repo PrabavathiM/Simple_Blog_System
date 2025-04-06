@@ -1,10 +1,8 @@
-<!-- connect the database -->
+<!-- PHP code remains the same at the top -->
 <?php
 include(__DIR__ . '/App/database/connect.php');
 
-// check if the form is submitted
 if (isset($_POST['submit'])) {
-    // get the form data
     $Username = $_POST['Username'] ?? null;
     $Email_id = $_POST['Email_id'] ?? null;
     $Password = $_POST['Password'] ?? null;
@@ -14,40 +12,28 @@ if (isset($_POST['submit'])) {
         exit;
     }
 
-    // hash the password
     $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
 
-    // check if the username already exists
     $stmt = $conn->prepare("SELECT * FROM register WHERE Username = ? OR Email_id = ?");
     $stmt->bind_param("ss", $Username, $Email_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        echo "<script>alert('Username or Email ID already exists.');</script>";
+        echo "<script>alert('Username or Email ID already exists. Please try with different details.'); window.history.back();</script>";
         $stmt->close();
         exit;
-    } else {
-        $stmt->close();
     }
     $stmt->close();
-    $conn->close();
-    
 
-    // insert the data into the database
     $stmt = $conn->prepare("INSERT INTO register (Username, Email_id, Password) VALUES (?, ?, ?)");
-
     if ($stmt) {
-        // bind the parameters
         $stmt->bind_param("sss", $Username, $Email_id, $hashedPassword);
-
-        // execute the statement
         if ($stmt->execute()) {
-            echo "<script>alert('Registration successful!');</script>";
+            echo "<script>alert('Registration successful!'); window.location.href='Login.php';</script>";
+            exit;
         } else {
             echo "Error executing statement: " . $stmt->error;
         }
-
-        // close the statement
         $stmt->close();
     } else {
         echo "Error preparing statement: " . $conn->error;
@@ -55,97 +41,140 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
-<!-- HTML code for the registration form -->
+<!-- HTML + CSS Starts -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Page</title>
+    <title>Register | Blog System</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #fffdfd;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+            margin: 0;
+            padding: 0;
         }
 
         .container {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 80px auto;
+            background-color: #fff;
+            padding: 35px 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
         h1 {
             text-align: center;
+            margin-bottom: 10px;
+            color: #0d6efd;
+            font-size: 32px;
+        }
+
+        p {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 6px;
+            font-weight: 600;
             color: #333;
         }
 
         input[type="text"],
-        input[type="Email_id"],
+        input[type="email"],
         input[type="password"] {
-            width: 90%;
-            padding: 12px 20px;
-            margin: 8px 0;
+            width: 100%;
+            padding: 12px 15px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #0d6efd;
+            outline: none;
+            box-shadow: 0 0 6px rgba(13, 110, 253, 0.3);
         }
 
         .submit_button {
-            background-color: rgb(46, 195, 254);
-            color: white;
-            padding: 12px 18px;
-            margin: 8px auto;
+            width: 100%;
+            padding: 14px;
+            margin-top: 30px;
+            background-color: #0d6efd;
+            color: #fff;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            display: flex;
-            justify-content: center;
+            border-radius: 10px;
             font-size: 18px;
             font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
         .submit_button:hover {
-            background-color: rgb(9, 8, 8);
-            color: white;
+            background-color: #084298;
+            transform: scale(1.03);
         }
 
         .login {
             text-align: center;
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+        .login a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 40px 20px;
+                padding: 25px;
+            }
         }
     </style>
 </head>
-
 <body>
+
     <form method="POST" action="Register.php">
         <div class="container">
-            <h1>Create an Account</h1>
-            <p>Please fill in the information to create an account</p>
-            <hr>
+            <h1>✨ Create an Account</h1>
+            <p>Fill in the details to register</p>
 
-            <!-- username -->
-            <label for="Username"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="Username" id="Username" required>
+            <label for="Username">Username</label>
+            <input type="text" name="Username" id="Username" placeholder="Enter Username" required>
 
-            <!-- email -->
-            <label for="Email_id"><b>Email ID</b></label>
-            <input type="Email_id" placeholder="Enter Email ID" name="Email_id" id="Email_id" required>
+            <label for="Email_id">Email ID</label>
+            <input type="email" name="Email_id" id="Email_id" placeholder="Enter Email ID" required>
 
-            <!-- password -->
-            <label for="Password"><b>Password</b></label>
-            <input type="Password" placeholder="Enter Password" name="Password" id="Password" required>
-            <hr>
+            <label for="Password">Password</label>
+            <input type="password" name="Password" id="Password" placeholder="Enter Password" required>
 
-            <p>By creating an account you agree to our <a href="#">Terms & Privacy</a></p>
+            <p style="font-size: 13px; text-align: center;">By registering, you agree to our <a href="#" style="color: #0d6efd;">Terms & Privacy</a>.</p>
 
-            <button class="submit_button" type="submit" name="submit">Register</button>
-        </div>
+            <button type="submit" name="submit" class="submit_button">Register</button>
 
-        <div class="container login">
-            <p>Already have an account? <a href="Login.php">Login</a></p>
+            <div class="login">
+                <p>Already have an account? <a href="Login.php">Login</a></p>
+            </div>
         </div>
     </form>
+
 </body>
 </html>

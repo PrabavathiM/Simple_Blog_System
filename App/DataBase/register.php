@@ -1,0 +1,6 @@
+CREATE TABLE register (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(100),
+    Email_id VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+);
