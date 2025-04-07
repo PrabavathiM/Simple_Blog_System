@@ -26,7 +26,7 @@ The Simple Blog System is a PHP-based web application that allows users to creat
 3. Setup the database:
    - Create a MySQL database.
    - Import the provided SQL file into your database.
-   - 
+
 4. Configure the application:
    - Update the database configuration in the `config.php` file with your database credentials.
    ```php
