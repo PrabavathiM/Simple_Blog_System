@@ -1,33 +1,34 @@
 <?php
 session_start();
+//connect the database
 include(__DIR__ . '/App/database/connect.php');
 
 if (!isset($_SESSION['Username'])) {
     header('Location: Login.php');
     exit;
 }
-
+//user is authentication
 $id = $_GET['id'];
 $Username = $_SESSION['Username'];
 
-// Get the blog post
+//Get the blog post
 $stmt = $conn->prepare("SELECT * FROM blog_posts WHERE id = ? AND user_id = ?");
 $stmt->bind_param("is", $id, $Username);
 $stmt->execute();
 $result = $stmt->get_result();
 $blog = $result->fetch_assoc();
-
+ 
 if (!$blog) {
     echo "No blog post found or unauthorized access.";
     exit;
 }
-
+//Check blog post exists
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $content = $_POST['content'];
-    $newImagePath = $blog['image_path']; // Default to existing
+    $newImagePath = $blog['image_path']; 
 
-    // Handle new image upload (optional)
+//Handle new image upload
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
         $uploadDir = 'image/';
         if (!is_dir($uploadDir)) {
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Update blog post
+//Update blog post
     $update = $conn->prepare("UPDATE blog_posts SET title = ?, content = ?, image_path = ? WHERE id = ? AND user_id = ?");
     $update->bind_param("sssis", $title, $content, $newImagePath, $id, $Username);
     $update->execute();
@@ -56,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 <head>
     <title>Edit Blog</title>
+<!--styling  -->
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -158,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h2>📝 Edit Blog</h2>
+<!--  form -->
         <form method="POST" enctype="multipart/form-data">
             <label>Title:</label>
             <input type="text" name="title" value="<?= htmlspecialchars($blog['title']) ?>" required>
@@ -171,8 +174,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php else: ?>
                 <p>No image uploaded.</p>
             <?php endif; ?>
-
-            <label>Upload New Image (optional):</label>
+<!--upload image  -->
+            <label>Upload New Image:</label>
             <input type="file" name="image" accept="image/*" class="custom-file-input">
 
             <button type="submit">💾 Update</button>

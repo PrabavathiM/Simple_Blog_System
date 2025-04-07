@@ -1,17 +1,18 @@
 <?php
 include(__DIR__ . '/App/database/connect.php');
 
-// Fetch public blogs
+//Fetch public blogs
 $sql = "SELECT * FROM blog_posts ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
-
+<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog System Home Page</title>
+   <!--styling  -->
     <style>
         * {
             box-sizing: border-box;
@@ -144,7 +145,7 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
-
+<!-- Home Page header  -->
     <div class="header">
         🌐 Blog System
         <div class="nav-buttons">
@@ -152,30 +153,30 @@ $result = $conn->query($sql);
             <a href="Login.php"><button>Login</button></a>
         </div>
     </div>
-
+<!-- display blogs -->
     <div class="blog-container">
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="blog-card">
-    <?php if (!empty($row['image_path'])): ?>
-    <img src="<?php echo htmlspecialchars($row['image_path']); ?>" alt="Blog Image" class="blog-image">
-<?php endif; ?>
+            <?php if (!empty($row['image_path'])): ?>
+                <img src="<?php echo htmlspecialchars($row['image_path']); ?>" alt="Blog Image" class="blog-image">
+            <?php endif; ?>
 
-<div class="blog-title"><?php echo htmlspecialchars($row['title']); ?></div>
+           <div class="blog-title"><?php echo htmlspecialchars($row['title']); ?></div>
+ 
+            <?php if (!empty($row['author'])): ?>
+                <div class="blog-author">By <?php echo htmlspecialchars($row['author']); ?></div>
+            <?php endif; ?>
 
-<?php if (!empty($row['author'])): ?>
-    <div class="blog-author">By <?php echo htmlspecialchars($row['author']); ?></div>
-<?php endif; ?>
+            <div class="blog-date">
+                <?php echo date("F j, Y", strtotime($row['created_at'])); ?>
+            </div>
 
-<div class="blog-date">
-    <?php echo date("F j, Y", strtotime($row['created_at'])); ?>
-</div>
+            <div class="blog-content">
+                <?php echo nl2br(htmlspecialchars($row['content'])); ?>
+            </div>
 
-<div class="blog-content">
-    <?php echo nl2br(htmlspecialchars($row['content'])); ?>
-</div>
-
-</div>
+            </div>
 
             <?php endwhile; ?>
         <?php else: ?>

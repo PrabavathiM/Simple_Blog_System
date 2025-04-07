@@ -1,7 +1,7 @@
 <?php
 session_start();
 include(__DIR__ . '/App/database/connect.php');
-
+//Check if user is logged in
 $Username = $_SESSION['Username'];
 
 $stmt = $conn->prepare("SELECT * FROM register WHERE Username = ?");
@@ -10,11 +10,14 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 ?>
 
+<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>My Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Styling -->
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -33,21 +36,21 @@ $user = $stmt->get_result()->fetch_assoc();
         }
 
         .info-box {
-    background-color: #f5f9ff;
-    border-left: 6px solid #0d6efd;
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        background-color: #f5f9ff;
+        border-left: 6px solid #0d6efd;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.info-box label {
-    font-weight: bold;
-    color: #0d6efd;
-    font-size: 16px;
-    display: block;
-    margin-bottom: 5px;
-}
+    .info-box label {
+        font-weight: bold;
+        color: #0d6efd;
+        font-size: 16px;
+        display: block;
+        margin-bottom: 5px;
+    }
 
 .info-value {
     font-size: 18px;
@@ -105,8 +108,7 @@ $user = $stmt->get_result()->fetch_assoc();
 
 <div class="profile-container">
     <h2>👤 My Profile</h2>
-    <!-- <p><strong class="label">Username:</strong> <?= htmlspecialchars($user['Username']) ?></p>
-    <p><strong class="label">Email:</strong> <?= htmlspecialchars($user['Email_id']) ?></p> -->
+   
     <div class="info-box">
     <label>👤 Username</label>
     <div class="info-value"><?= htmlspecialchars($user['Username']) ?></div>

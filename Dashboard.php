@@ -2,19 +2,24 @@
 session_start();
 include(__DIR__ . '/App/database/connect.php');
 
+//Check if user is logged in
 if (!isset($_SESSION['Username'])) {
     header('Location: Login.php');
     exit;
 }
 
+//Fetch user blogs from the database
 $Username = $_SESSION['Username'];
 $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORDER BY created_at DESC");
 ?>
 
+
+<!-- HTML  -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Dashboard</title>
+    <!-- stying -->
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,6 +49,7 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             margin-top: 40px;
         }
 
+        /* nav styling */
         .nav-links {
             text-align: center;
             margin: 30px 0;
@@ -68,6 +74,7 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             transform: translateY(-2px);
         }
 
+        /* styling blog-post */
         .blog-post {
             background: linear-gradient(135deg, #fdfbfb, #ebedee);
             border-left: 5px solid #3498db;
@@ -83,12 +90,12 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
         }
 
         .blog-post h4 {
-    margin-top: 0;
-    color: #2c3e50;
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-}
+        margin-top: 0;
+        color: #2c3e50;
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        }
 
         .blog-post p {
             color: #555;
@@ -113,8 +120,6 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             color: #c0392b;
         }
 
-
-
         .no-blogs {
             text-align: center;
             color: #555;
@@ -123,43 +128,46 @@ $result = $conn->query("SELECT * FROM blog_posts WHERE user_id = '$Username' ORD
             margin-top: 40px;
         }
 
+/* styling image */
         .blog-image {
-    width: 100%;
-    max-width: 600px;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 12px;
-    display: block;
-    margin: 10px auto;
+        width: 100%;
+        max-width: 600px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 12px;
+        display: block;
+        margin: 10px auto;
 }
-
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Welcome, <?= htmlspecialchars($Username); ?>!</h2>
 
+    <!-- Nav links for writing a blog, viewing profile, and logging out -->
         <div class="nav-links">
             <a href="write_blog.php">✍️ Write Blog</a>
             <a href="profile.php">👤 Profile</a>
             <a href="logout.php">🚪 Logout</a>
         </div>
 
+        <!-- Displaying blogs -->
         <?php if ($result->num_rows == 0): ?>
             <p class="no-blogs">No blogs found. Write your first blog! 🚀</p>
         <?php else: ?>
-            <h3>📝 Blogs</h3>
+
+        <h3>📝 Blogs</h3>
 
             <?php while ($row = $result->fetch_assoc()) { ?>
                 <div class="blog-post">
                     <h4><?= htmlspecialchars($row['title']) ?></h4>
-                 <?php if (!empty($row['image_path'])): ?>
-    <img src="<?= htmlspecialchars($row['image_path']) ?>" alt="Blog Image" class="blog-image">
-<?php endif; ?>
+                <?php if (!empty($row['image_path'])): ?>
+                    <img src="<?= htmlspecialchars($row['image_path']) ?>" alt="Blog Image" class="blog-image">
+                <?php endif; ?>
                     <p class="blog-author">By <?= htmlspecialchars($row['author']) ?></p>
+                    <p><?= nl2br(htmlspecialchars($row['content'])) ?></p>
 
-<p><?= nl2br(htmlspecialchars($row['content'])) ?></p>
-
+                <!-- Displaying blog content -->
                     <small>Posted on <?= $row['created_at'] ?></small>
                     <a href="edit_blog.php?id=<?= $row['id'] ?>">Edit</a>
                     <a href="delete_blog.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this blog?')">Delete</a>

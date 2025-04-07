@@ -1,7 +1,7 @@
-<!-- PHP code remains the same at the top -->
 <?php
 include(__DIR__ . '/App/database/connect.php');
 
+//Check if user is already logged in
 if (isset($_POST['submit'])) {
     $Username = $_POST['Username'] ?? null;
     $Email_id = $_POST['Email_id'] ?? null;
@@ -12,8 +12,10 @@ if (isset($_POST['submit'])) {
         exit;
     }
 
+//hash the password
     $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
 
+//Check if username and email are valid
     $stmt = $conn->prepare("SELECT * FROM register WHERE Username = ? OR Email_id = ?");
     $stmt->bind_param("ss", $Username, $Email_id);
     $stmt->execute();
@@ -25,6 +27,7 @@ if (isset($_POST['submit'])) {
     }
     $stmt->close();
 
+//Insert new user into the database
     $stmt = $conn->prepare("INSERT INTO register (Username, Email_id, Password) VALUES (?, ?, ?)");
     if ($stmt) {
         $stmt->bind_param("sss", $Username, $Email_id, $hashedPassword);
@@ -41,13 +44,14 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
-<!-- HTML + CSS Starts -->
+<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | Blog System</title>
+<!-- styling -->
     <style>
         * {
             box-sizing: border-box;
@@ -151,7 +155,7 @@ if (isset($_POST['submit'])) {
     </style>
 </head>
 <body>
-
+<!-- form -->
     <form method="POST" action="Register.php">
         <div class="container">
             <h1>✨ Create an Account</h1>

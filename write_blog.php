@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['content'];
     $imagePath = '';
 
-    // Handle image upload
+// Handle image upload
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
         $uploadDir = 'image/';
         if (!is_dir($uploadDir)) {
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Insert blog post with image and author
+//Insert blog post with image and author
     $stmt = $conn->prepare("INSERT INTO blog_posts (user_id, title, content, image_path, author) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssss", $Username, $title, $content, $imagePath, $Username);
     $stmt->execute();
@@ -38,11 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
-
+<!-- HTML -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Write a Blog</title>
+<!-- styling -->
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -139,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h2>✍️ Write a Blog</h2>
-       <!-- Inside the <form> -->
+<!-- form -->
 <form method="POST" enctype="multipart/form-data">
     <label>Title:</label>
     <input type="text" name="title" required>
@@ -152,8 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">🚀 Publish</button>
 </form>
-
-
 
         <div class="back-link">
             <p><a href="Dashboard.php">← Back to Dashboard</a></p>

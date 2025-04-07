@@ -1,24 +1,22 @@
-<!-- PHP code remains unchanged -->
-
 <?php
 session_start();
 include(__DIR__ . '/App/database/connect.php');
-
+//Check if user is already logged in
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $Username = $_POST['Username'] ?? '';
     $Password = $_POST['Password'] ?? '';
-
+//Check if username and password are empty
     if (empty($Username) || empty($Password)) {
         echo "<script>alert('Please enter both username and password.'); 
         window.location.href='Dashboard.php';</script>";
         exit;
     }
-
+//Check if user exists in the database
     $stmt = $conn->prepare("SELECT * FROM register WHERE Username = ?");
     $stmt->bind_param("s", $Username);
     $stmt->execute();
     $result = $stmt->get_result();
-
+//Check if user is found
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
@@ -37,13 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!-- HTML & CSS Styled Section -->
+<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Blog System</title>
+    <!-- styling  -->
     <style>
         * {
             box-sizing: border-box;
@@ -140,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-
+<!-- form -->
     <form action="Login.php" method="POST">
         <div class="container">
             <h1>🔐 Login to Your Account</h1>

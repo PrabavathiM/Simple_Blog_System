@@ -9,7 +9,7 @@ if (!isset($_SESSION['Username'])) {
 
 $Username = $_SESSION['Username'];
 
-// Fetch current user data
+//Fetch current user data
 $stmt = $conn->prepare("SELECT * FROM register WHERE Username = ?");
 $stmt->bind_param("s", $Username);
 $stmt->execute();
@@ -17,7 +17,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// Update user data
+//Update user data
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newUsername = $_POST['Username'] ?? '';
     $newEmail = $_POST['Email_id'] ?? '';
@@ -95,21 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 25px;
         }
 
-        /* button {
-            background-color: #0d6efd;;
-            color: white;
-            padding: 12px 25px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover {
-            background-color: #0d6efd;
-            transform: scale(1.03);
-        } */
 
         button {
             background-color: #0d6efd;
@@ -147,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-
+<!-- edit the blog -->
 <div class="edit-container">
     <h2>✏️ Edit Profile</h2>
     <form method="POST">
