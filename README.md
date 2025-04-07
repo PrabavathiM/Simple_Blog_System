@@ -1,4 +1,5 @@
 # Simple_Blog_System
+![image](https://github.com/user-attachments/assets/d529e2a7-ecec-4d3a-a756-b28e4f15c95a)
 
 
 ## Overview
@@ -64,3 +65,4 @@ For any questions or feedback, please reach out to [PrabavathiM](https://github.
 
 Enjoy blogging with Simple Blog System!
 ```
+
