@@ -1,5 +1,6 @@
 # Simple_Blog_System
 ![image](https://github.com/user-attachments/assets/d529e2a7-ecec-4d3a-a756-b28e4f15c95a)
+![image](https://github.com/user-attachments/assets/32236f18-e0b1-4fdd-a81e-760c6e2b5e72)
 
 
 ## Overview
